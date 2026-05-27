@@ -28,7 +28,7 @@ jobs:
         run: pnpm lint
 
       - name: Fun
-        run: pnpm prisma generate
+        run: pnpm exec prisma generate --schema=packages/prisma-adapter/prisma/schema.prisma
 
       - name: Build
         run: pnpm build
