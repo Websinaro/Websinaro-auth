@@ -1,0 +1,101 @@
+// @websinaro/auth Prisma Schema
+// Copy this into your project's schema.prisma or use with prisma merge.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AuthUser {
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  passwordHash         String
+  username             String?   @unique
+  name                 String?
+  phone                String?
+  roles                String[]  @default([])
+  permissions          String[]  @default([])
+  isEmailVerified      Boolean   @default(false)
+  isLocked             Boolean   @default(false)
+  lockReason           String?
+  lockUntil            DateTime?
+  failedLoginAttempts  Int       @default(0)
+  lastLoginAt          DateTime?
+  lastLoginIp          String?
+  metadata             Json?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  deletedAt            DateTime?
+
+  sessions             AuthSession[]
+  auditLogs            AuthAuditLog[]
+
+  @@index([email])
+  @@index([deletedAt])
+  @@map("auth_users")
+}
+
+model AuthSession {
+  id                String   @id @default(cuid())
+  userId            String
+  refreshTokenJti   String   @unique
+  tokenFamily       String
+  ipAddress         String
+  userAgent         String
+  deviceName        String?
+  isRevoked         Boolean  @default(false)
+  expiresAt         DateTime
+  lastActiveAt      DateTime @default(now())
+  createdAt         DateTime @default(now())
+  rememberMe        Boolean  @default(false)
+
+  user              AuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([refreshTokenJti])
+  @@index([expiresAt])
+  @@map("auth_sessions")
+}
+
+model AuthTokenBlacklist {
+  jti       String   @id
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+  @@map("auth_token_blacklist")
+}
+
+model AuthVerificationToken {
+  token     String   @id
+  userId    String
+  purpose   String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("auth_verification_tokens")
+}
+
+model AuthAuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  userId    String?
+  ip        String
+  userAgent String?
+  details   String?
+  metadata  Json?
+  timestamp DateTime @default(now())
+
+  user      AuthUser? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+  @@map("auth_audit_logs")
+}
