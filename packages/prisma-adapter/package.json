@@ -17,7 +17,7 @@
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "typecheck": "tsc --noEmit"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@prisma/client": "^5.0.0",
     "@websinaro/auth": "workspace:*"
   },
