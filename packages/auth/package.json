@@ -20,7 +20,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "vitest run",
-    "lint": "eslint src --ext .ts"
+    "lint": "eslint src --ext .js"
   },
   "dependencies": {
     "argon2": "^0.41.1",
