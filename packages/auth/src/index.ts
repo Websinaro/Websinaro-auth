@@ -103,7 +103,6 @@ export { createExpressMiddleware, createFastifyPlugin } from './middleware/index
 
 export { AuditLogger } from './core/audit.js';
 export type { AuditWriter } from './core/audit.js';
-export * from './middleware/authMiddleware';
 
 // ─── Version ─────────────────────────────────────────────────
 
